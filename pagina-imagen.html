@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="titulo-imagen">Visual en Grande</title>
+    <link rel="stylesheet" href="estilos.css">
+    <style>
+        /* CSS específico para centrar y estilizar el contenido grande */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #1a1a1a;
+        }
+        .contenedor-grande img, .contenedor-grande video {
+            max-width: 90vw;
+            max-height: 90vh;
+            display: block;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor-grande">
+        </div>
+    <script>
+        // JS para obtener el archivo de la URL y mostrarlo
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const nombreArchivo = params.get('imagen');
+            const contenedor = document.querySelector('.contenedor-grande');
+
+            if (nombreArchivo) {
+                const nombreLowerCase = nombreArchivo.toLowerCase();
+                const esVideo = nombreLowerCase.endsWith('.mp4');
+                
+                if (esVideo) {
+                    const video = document.createElement('video');
+                    video.src = `imagenes/${nombreArchivo}`;
+                    video.controls = true; 
+                    video.autoplay = true; 
+                    video.loop = true; 
+                    contenedor.appendChild(video);
+                } else {
+                    const img = document.createElement('img');
+                    img.src = `imagenes/${nombreArchivo}`;
+                    img.alt = `Contenido en grande: ${nombreArchivo}`;
+                    contenedor.appendChild(img);
+                }
+                document.getElementById('titulo-imagen').textContent = nombreArchivo;
+            } else {
+                contenedor.innerHTML = '<h1>Error: Archivo no especificado.</h1>';
+            }
+        });
+    </script>
+</body>
+</html>
