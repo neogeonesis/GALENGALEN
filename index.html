@@ -3,31 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Portafolio Interactivo</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Mi Web Arrastrable</title>
+    <style>
+        body {
+            background-color: #f0f0f0; /* Color de fondo suave */
+            margin: 0;
+            overflow: hidden; /* Evita barras de scroll si tiras cosas al borde */
+            height: 100vh;
+            font-family: monospace;
+        }
+
+        /* La clase para tus cuadritos o imágenes */
+        .draggable {
+            position: absolute; /* CRUCIAL: permite moverlos libremente */
+            width: 150px;       /* Tamaño por defecto */
+            height: 150px;
+            cursor: grab;       /* Cambia el cursor a manita */
+            user-select: none;  /* Evita que se seleccione el contenido al arrastrar */
+            box-shadow: 5px 5px 0px #000; /* Sombra sólida estilo brutalista */
+            transition: transform 0.1s;   /* Pequeña animación al tocar */
+        }
+
+        .draggable:active {
+            cursor: grabbing;
+            transform: scale(1.05); /* Efecto de "levantar" */
+        }
+
+        /* Estilos visuales para los ejemplos (puedes borrarlos y usar <img>) */
+        .box-1 { background: #ff5f5f; top: 10%; left: 10%; }
+        .box-2 { background: #5fafff; top: 30%; left: 40%; width: 200px; }
+        .box-3 { background: #ffe75f; top: 60%; left: 20%; height: 200px; }
+        .box-img { top: 20%; left: 60%; width: auto; height: auto; padding: 0; border: 2px solid #000;}
+        
+    </style>
 </head>
 <body>
 
-    <div class="draggable" style="top: 10%; left: 10%;">
-        <img src="https://via.placeholder.com/150" alt="Imagen 1">
-        <p>Proyecto A</p>
+    <div class="draggable box-1">
+        <p style="padding: 10px;">Hola, arrástrame</p>
     </div>
 
-    <div class="draggable" style="top: 20%; left: 40%;">
-        <div class="caja-texto">
-            <h2>Hola</h2>
-            <p>Soy un texto arrastrable.</p>
+    <div class="draggable box-2">
+        <p style="padding: 10px;">Soy otro cuadro</p>
+    </div>
+
+    <div class="draggable box-3">
+        <p style="padding: 10px;">Estilo llll.com</p>
+    </div>
+
+    <div class="draggable box-img">
+        <img src="https://via.placeholder.com/200" draggable="false" alt="Demo">
         </div>
-    </div>
 
-    <div class="draggable" style="top: 50%; left: 60%;">
-        <img src="https://via.placeholder.com/200x100" alt="Imagen 2">
-    </div>
+    <script>
+        // Lógica de Arrastrar y Soltar
+        let currentElement = null;
+        let initialX = 0;
+        let initialY = 0;
+        let xOffset = 0;
+        let yOffset = 0;
+        let highestZ = 1; // Para controlar quién está encima
 
-    <div class="draggable" style="top: 60%; left: 15%;">
-        <img src="https://via.placeholder.com/100" alt="Imagen 3">
-    </div>
+        const draggables = document.querySelectorAll('.draggable');
 
-    <script src="script.js"></script>
+        draggables.forEach(el => {
+            el.addEventListener('mousedown', dragStart);
+        });
+
+        // Eventos globales para que no se pierda el foco si mueves el mouse muy rápido
+        document.addEventListener('mouseup', dragEnd);
+        document.addEventListener('mousemove', drag);
+
+        function dragStart(e) {
+            currentElement = e.target.closest('.draggable'); // Asegura seleccionar el div contenedor
+            
+            if (currentElement) {
+                // Traer al frente al hacer clic
+                highestZ++;
+                currentElement.style.zIndex = highestZ;
+
+                // Calcular posición inicial
+                initialX = e.clientX - currentElement.offsetLeft;
+                initialY = e.clientY - currentElement.offsetTop;
+            }
+        }
+
+        function drag(e) {
+            if (currentElement) {
+                e.preventDefault();
+                
+                // Calcular nueva posición
+                let currentX = e.clientX - initialX;
+                let currentY = e.clientY - initialY;
+
+                // Aplicar coordenadas
+                currentElement.style.left = currentX + "px";
+                currentElement.style.top = currentY + "px";
+            }
+        }
+
+        function dragEnd() {
+            initialX = currentElement ? currentElement.offsetLeft : 0;
+            initialY = currentElement ? currentElement.offsetTop : 0;
+            currentElement = null;
+        }
+    </script>
+
 </body>
 </html>
