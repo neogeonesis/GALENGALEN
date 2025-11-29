@@ -4,13 +4,12 @@
 body {
     font-family: sans-serif;
     margin: 0;
-    background-color: #f4f4f9;
+    background-color: #f4f4f9; /* Fondo muy claro */
 }
 
+/* SECCIÓN MODIFICADA: Eliminado el estilo visual del encabezado */
 header {
-    background-color: #333;
-    color: white;
-    padding: 20px;
+    padding: 0;
     text-align: center;
 }
 
@@ -28,15 +27,18 @@ header {
     height: 180px;
     overflow: hidden;
     cursor: grab; /* Indica que se puede arrastrar */
-    border: 3px solid #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    
+    /* MODIFICADO: Estilo minimalista */
+    border: none; 
+    border-radius: 0; 
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Sombra sutil para separar */
+    
     transition: transform 0.2s;
 }
 
 .item-galeria:hover {
-    transform: translateY(-5px); 
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    transform: none; /* Quitamos el efecto de levantamiento */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Sombra un poco más fuerte al pasar el ratón */
 }
 
 .item-galeria:active {
