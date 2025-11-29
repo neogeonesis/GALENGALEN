@@ -1,4 +1,4 @@
-// script.js - CÓDIGO MINIMALISTA Y ROBUSTO PARA EL ARRASTRE
+// script.js - CÓDIGO FINAL DE ARRASTRE (Más compatible)
 document.addEventListener('DOMContentLoaded', () => {
     const galeria = document.querySelector('.galeria');
     let draggedItem = null;
@@ -10,13 +10,34 @@ document.addEventListener('DOMContentLoaded', () => {
             draggedItem = item;
             setTimeout(() => {
                 draggedItem.classList.add('arrastrando');
-            }, 0);
-            // Esto es crucial para la compatibilidad del arrastre
+            }, 0); 
             e.dataTransfer.setData('text/plain', 'drag'); 
         }
     });
 
-    // 2. FIN DEL ARRASTRE (dragend)
+    // 2. PERMITE EL SOLTADO Y LA REORDENACIÓN (dragover)
+    // Usamos esta función para decirle al navegador: "Sí, puedes soltar aquí."
+    galeria.addEventListener('dragover', (e) => {
+        e.preventDefault(); 
+        
+        const target = e.target.closest('.item-galeria');
+        if (target && target !== draggedItem) {
+            
+            // Lógica simple para mover el elemento si la posición cambia
+            const rect = target.getBoundingClientRect();
+            const esAntes = e.clientY < rect.top + rect.height / 2;
+
+            if (esAntes) {
+                // Mover antes
+                galeria.insertBefore(draggedItem, target);
+            } else {
+                // Mover después
+                galeria.insertBefore(draggedItem, target.nextSibling);
+            }
+        }
+    });
+
+    // 3. FIN DEL ARRASTRE (dragend)
     galeria.addEventListener('dragend', () => {
         if (draggedItem) {
             draggedItem.classList.remove('arrastrando');
@@ -24,26 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         draggedItem = null;
     });
 
-    // 3. SOBRE EL ELEMENTO (dragover): PERMITE EL SOLTADO
-    galeria.addEventListener('dragover', (e) => {
-        e.preventDefault(); 
-
-        const target = e.target.closest('.item-galeria');
-        if (target && target !== draggedItem) {
-            
-            // Lógica para reordenar
-            const rect = target.getBoundingClientRect();
-            const esAntes = e.clientY < rect.top + rect.height / 2;
-
-            if (esAntes) {
-                galeria.insertBefore(draggedItem, target);
-            } else {
-                galeria.insertBefore(draggedItem, target.nextSibling);
-            }
-        }
-    });
-
-    // 4. NECESARIO PARA COMPATIBILIDAD
+    // 4. NECESARIO PARA COMPATIBILIDAD (dragenter)
     galeria.addEventListener('dragenter', (e) => {
         e.preventDefault();
     });
