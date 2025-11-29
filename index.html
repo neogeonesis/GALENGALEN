@@ -4,109 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Web Arrastrable</title>
+
     <style>
         body {
-            background-color: #f0f0f0; /* Color de fondo suave */
             margin: 0;
-            overflow: hidden; /* Evita barras de scroll si tiras cosas al borde */
+            padding: 0;
+            background-color: #f4f4f4;
             height: 100vh;
-            font-family: monospace;
+            overflow: hidden; /* Evita barras de desplazamiento */
+            font-family: 'Courier New', Courier, monospace;
         }
 
-        /* La clase para tus cuadritos o imágenes */
         .draggable {
-            position: absolute; /* CRUCIAL: permite moverlos libremente */
-            width: 150px;       /* Tamaño por defecto */
-            height: 150px;
-            cursor: grab;       /* Cambia el cursor a manita */
-            user-select: none;  /* Evita que se seleccione el contenido al arrastrar */
-            box-shadow: 5px 5px 0px #000; /* Sombra sólida estilo brutalista */
-            transition: transform 0.1s;   /* Pequeña animación al tocar */
+            position: absolute; /* Vital para que se mueva */
+            cursor: grab;
+            background: white;
+            padding: 10px;
+            border: 1px solid #000;
+            box-shadow: 5px 5px 0px rgba(0,0,0,1); /* Sombra dura estilo retro */
+            user-select: none;
+            width: fit-content;
         }
 
         .draggable:active {
             cursor: grabbing;
-            transform: scale(1.05); /* Efecto de "levantar" */
+            background-color: #e8e8e8;
         }
 
-        /* Estilos visuales para los ejemplos (puedes borrarlos y usar <img>) */
-        .box-1 { background: #ff5f5f; top: 10%; left: 10%; }
-        .box-2 { background: #5fafff; top: 30%; left: 40%; width: 200px; }
-        .box-3 { background: #ffe75f; top: 60%; left: 20%; height: 200px; }
-        .box-img { top: 20%; left: 60%; width: auto; height: auto; padding: 0; border: 2px solid #000;}
-        
+        img {
+            pointer-events: none; /* Evita bugs al arrastrar imágenes */
+            display: block;
+            max-width: 200px; /* Tamaño máximo de imágenes */
+            height: auto;
+        }
     </style>
 </head>
 <body>
 
-    <div class="draggable box-1">
-        <p style="padding: 10px;">Hola, arrástrame</p>
+    <div class="draggable" style="top: 10%; left: 10%;">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3ZxeXJ4OXQ5ZnA5ZnA5ZnA5ZnA5ZnA5ZnA5ZnA5ZnA/3o7aD2saalBwwftBIY/giphy.gif" alt="Gif">
+        <p>¡Arrastrame!</p>
     </div>
 
-    <div class="draggable box-2">
-        <p style="padding: 10px;">Soy otro cuadro</p>
+    <div class="draggable" style="top: 40%; left: 50%;">
+        <h3>Hola Mundo</h3>
+        <p>Soy una nota flotante.</p>
     </div>
 
-    <div class="draggable box-3">
-        <p style="padding: 10px;">Estilo llll.com</p>
+    <div class="draggable" style="top: 20%; left: 70%;">
+        <img src="https://placekitten.com/200/200" alt="Gato">
     </div>
-
-    <div class="draggable box-img">
-        <img src="https://via.placeholder.com/200" draggable="false" alt="Demo">
-        </div>
 
     <script>
-        // Lógica de Arrastrar y Soltar
-        let currentElement = null;
-        let initialX = 0;
-        let initialY = 0;
-        let xOffset = 0;
-        let yOffset = 0;
-        let highestZ = 1; // Para controlar quién está encima
-
         const draggables = document.querySelectorAll('.draggable');
+        let currentElement = null;
+        let startX = 0, startY = 0, initialLeft = 0, initialTop = 0;
+        let zIndexCounter = 1;
 
-        draggables.forEach(el => {
-            el.addEventListener('mousedown', dragStart);
+        draggables.forEach(element => {
+            element.addEventListener('mousedown', (e) => {
+                currentElement = element;
+                startX = e.clientX;
+                startY = e.clientY;
+                
+                // Obtenemos la posición actual
+                const rect = currentElement.getBoundingClientRect();
+                initialLeft = rect.left;
+                initialTop = rect.top;
+
+                // Traemos el elemento al frente
+                zIndexCounter++;
+                currentElement.style.zIndex = zIndexCounter;
+            });
         });
 
-        // Eventos globales para que no se pierda el foco si mueves el mouse muy rápido
-        document.addEventListener('mouseup', dragEnd);
-        document.addEventListener('mousemove', drag);
+        document.addEventListener('mousemove', (e) => {
+            if (!currentElement) return;
+            e.preventDefault(); // Evita selecciones extrañas
 
-        function dragStart(e) {
-            currentElement = e.target.closest('.draggable'); // Asegura seleccionar el div contenedor
-            
-            if (currentElement) {
-                // Traer al frente al hacer clic
-                highestZ++;
-                currentElement.style.zIndex = highestZ;
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
 
-                // Calcular posición inicial
-                initialX = e.clientX - currentElement.offsetLeft;
-                initialY = e.clientY - currentElement.offsetTop;
-            }
-        }
+            currentElement.style.left = `${initialLeft + deltaX}px`;
+            currentElement.style.top = `${initialTop + deltaY}px`;
+        });
 
-        function drag(e) {
-            if (currentElement) {
-                e.preventDefault();
-                
-                // Calcular nueva posición
-                let currentX = e.clientX - initialX;
-                let currentY = e.clientY - initialY;
-
-                // Aplicar coordenadas
-                currentElement.style.left = currentX + "px";
-                currentElement.style.top = currentY + "px";
-            }
-        }
-
-        function dragEnd() {
-            initialX = currentElement ? currentElement.offsetLeft : 0;
-            initialY = currentElement ? currentElement.offsetTop : 0;
+        document.addEventListener('mouseup', () => {
             currentElement = null;
-        }
+        });
     </script>
 
 </body>
