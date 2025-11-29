@@ -1,24 +1,24 @@
-// script.js - Maneja la funcionalidad de arrastrar y soltar (Drag and Drop)
+// script.js - Funcionalidad simple de arrastre y reordenación (NO guarda el orden)
 document.addEventListener('DOMContentLoaded', () => {
-    // La galería es el contenedor de los elementos arrastrables
     const galeria = document.querySelector('.galeria');
     let draggedItem = null;
 
-    // 1. Maneja el inicio del arrastre:
+    // 1. Maneja el inicio del arrastre
     galeria.addEventListener('dragstart', (e) => {
-        // Asegura que el elemento arrastrado sea el 'item-galeria'
+        // Busca el contenedor arrastrable más cercano
         const item = e.target.closest('.item-galeria'); 
         if (item) {
             draggedItem = item;
             
-            // Añade una clase para efecto visual (opacidad)
+            // Añade clase visual para mostrar que se está arrastrando
             setTimeout(() => {
                 draggedItem.classList.add('arrastrando');
             }, 0); 
+            e.dataTransfer.setData('text/plain', item.id || 'dragged'); 
         }
     });
 
-    // 2. Maneja el final del arrastre:
+    // 2. Maneja el final del arrastre
     galeria.addEventListener('dragend', () => {
         if (draggedItem) {
             draggedItem.classList.remove('arrastrando');
@@ -26,29 +26,27 @@ document.addEventListener('DOMContentLoaded', () => {
         draggedItem = null;
     });
 
-    // 3. Permite y realiza la reordenación:
+    // 3. Permite la acción de soltar (crucial)
     galeria.addEventListener('dragover', (e) => {
-        e.preventDefault(); // Esencial para permitir la acción de 'drop'
+        e.preventDefault(); // Permite que se pueda soltar el elemento
         const target = e.target.closest('.item-galeria');
         
-        // Verifica que estemos sobre otro elemento y que no sea el mismo que estamos arrastrando
         if (target && target !== draggedItem) {
-            
             const rect = target.getBoundingClientRect();
-            // Determina si estamos en la mitad superior o inferior del elemento objetivo
+            // Decide si insertar antes o después
             const esAntes = e.clientY < rect.top + rect.height / 2; 
 
             if (esAntes) {
-                // Inserta el elemento arrastrado justo antes del objetivo
+                // Inserta antes del elemento objetivo
                 galeria.insertBefore(draggedItem, target);
             } else {
-                // Inserta el elemento arrastrado justo después del objetivo
+                // Inserta después del elemento objetivo
                 galeria.insertBefore(draggedItem, target.nextSibling); 
             }
         }
     });
     
-    // Buenas prácticas para asegurar que el arrastre funcione bien en todos los navegadores
+    // 4. Previene errores en el arrastre
     galeria.addEventListener('dragenter', (e) => {
         e.preventDefault();
     });
