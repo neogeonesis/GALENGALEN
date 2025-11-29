@@ -1,7 +1,25 @@
-// script.js - CÓDIGO FINAL DE ARRASTRE (Más compatible)
+// script.js - CÓDIGO FINAL DE ARRASTRE Y REORDENACIÓN
 document.addEventListener('DOMContentLoaded', () => {
     const galeria = document.querySelector('.galeria');
     let draggedItem = null;
+
+    // Función auxiliar para obtener el elemento objetivo
+    const obtenerElementoObjetivo = (e) => {
+        // Busca todos los elementos de la galería que no sean el que estamos arrastrando
+        const elementosRestantes = [...galeria.querySelectorAll('.item-galeria:not(.arrastrando)')];
+
+        return elementosRestantes.reduce((masCercano, hijo) => {
+            const box = hijo.getBoundingClientRect();
+            // Calcula la distancia vertical entre el centro del elemento y el cursor
+            const offset = e.clientY - box.top - box.height / 2;
+
+            if (offset < 0 && offset > masCercano.offset) {
+                return { offset: offset, element: hijo };
+            } else {
+                return masCercano;
+            }
+        }, { offset: -Infinity }).element;
+    };
 
     // 1. INICIO DEL ARRASTRE (dragstart)
     galeria.addEventListener('dragstart', (e) => {
@@ -15,25 +33,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 2. PERMITE EL SOLTADO Y LA REORDENACIÓN (dragover)
-    // Usamos esta función para decirle al navegador: "Sí, puedes soltar aquí."
+    // 2. REORDENACIÓN (dragover): Determina dónde colocar el elemento
     galeria.addEventListener('dragover', (e) => {
         e.preventDefault(); 
         
-        const target = e.target.closest('.item-galeria');
-        if (target && target !== draggedItem) {
-            
-            // Lógica simple para mover el elemento si la posición cambia
-            const rect = target.getBoundingClientRect();
-            const esAntes = e.clientY < rect.top + rect.height / 2;
+        // Usamos la función robusta para encontrar el elemento más cercano
+        const afterElement = obtenerElementoObjetivo(e);
+        const currentElement = e.target.closest('.item-galeria');
 
-            if (esAntes) {
-                // Mover antes
-                galeria.insertBefore(draggedItem, target);
-            } else {
-                // Mover después
-                galeria.insertBefore(draggedItem, target.nextSibling);
-            }
+        // Mueve el elemento arrastrado a la nueva posición
+        if (afterElement == null) {
+            // Si no hay un elemento después (estamos al final)
+            if(draggedItem) galeria.appendChild(draggedItem);
+        } else {
+            // Mueve el elemento antes del objetivo
+            if(draggedItem) galeria.insertBefore(draggedItem, afterElement);
         }
     });
 
@@ -50,3 +64,18 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
     });
 });
+
+    // 3. FIN DEL ARRASTRE (dragend)
+    galeria.addEventListener('dragend', () => {
+        if (draggedItem) {
+            draggedItem.classList.remove('arrastrando');
+        }
+        draggedItem = null;
+    });
+
+    // 4. NECESARIO PARA COMPATIBILIDAD (dragenter)
+    galeria.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+    });
+});
+
