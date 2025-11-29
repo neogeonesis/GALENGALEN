@@ -1,4 +1,4 @@
-/* estilos.css - CÓDIGO FINAL COMPLETO */
+/* estilos.css - CÓDIGO FINAL COMPLETO CON MEJORAS */
 
 /* Estilos básicos y de fondo */
 body {
@@ -7,11 +7,10 @@ body {
     background-color: #f4f4f9; 
 }
 
-/* Encabezado: Minimalista y sin fondo oscuro */
+/* Encabezado: Minimalista */
 header {
     padding: 20px;
     text-align: center;
-    /* La fuente del encabezado se mantiene simple, sin fondo. */
 }
 
 /* Estilos del Contenedor de la Galería */
@@ -20,7 +19,10 @@ header {
     flex-wrap: wrap; 
     gap: 20px;     
     padding: 30px;
-    justify-content: center; /* Centra las miniaturas horizontalmente */
+    justify-content: center; 
+    
+    /* MEJORA: Transición para que la reordenación se vea suave */
+    transition: all 0.5s; 
 }
 
 /* Estilos de Cada Elemento (Miniatura) */
@@ -28,20 +30,19 @@ header {
     width: 250px; 
     height: 180px;
     overflow: hidden;
-    cursor: grab; /* Indica que se puede arrastrar */
+    cursor: grab; 
     
-    /* Diseño Minimalista: sin bordes ni esquinas */
     border: none; 
     border-radius: 0; 
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Sombra muy sutil */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); 
     
-    transition: transform 0.2s;
+    transition: box-shadow 0.2s, opacity 0.2s; /* Asegura que la opacidad del arrastre sea rápida */
 }
 
-/* Efecto al pasar el ratón: Minimalista */
+/* Efecto al pasar el ratón */
 .item-galeria:hover {
-    transform: none; /* Quitamos el efecto de levantamiento */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Sombra un poco más fuerte */
+    transform: none; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); 
 }
 
 .item-galeria:active {
@@ -49,8 +50,6 @@ header {
 }
 
 /* CORRECCIÓN CRUCIAL PARA EL ARRASTRE */
-/* Esto asegura que solo el DIV contenedor (con draggable="true") se arrastre, 
-   e ignora el comportamiento nativo del navegador sobre la imagen o el enlace. */
 .item-galeria img, .item-galeria a {
     pointer-events: none;
     -webkit-user-drag: none; 
@@ -66,8 +65,7 @@ header {
 
 /* Estilo para el elemento que se está arrastrando */
 .arrastrando {
-    opacity: 0.4;
+    opacity: 0.2; /* Lo hacemos más transparente para que no estorbe visualmente */
     border: 3px dashed #333;
     background-color: #eee;
 }
-
