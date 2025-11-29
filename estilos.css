@@ -21,7 +21,6 @@ header {
     padding: 30px;
     justify-content: center; 
     
-    /* MEJORA: Transición para que la reordenación se vea suave */
     transition: all 0.5s; 
 }
 
@@ -36,7 +35,7 @@ header {
     border-radius: 0; 
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); 
     
-    transition: box-shadow 0.2s, opacity 0.2s; /* Asegura que la opacidad del arrastre sea rápida */
+    transition: box-shadow 0.2s, opacity 0.2s; 
 }
 
 /* Efecto al pasar el ratón */
@@ -50,6 +49,7 @@ header {
 }
 
 /* CORRECCIÓN CRUCIAL PARA EL ARRASTRE */
+/* Esto asegura que el navegador no intente arrastrar la imagen o el enlace. */
 .item-galeria img, .item-galeria a {
     pointer-events: none;
     -webkit-user-drag: none; 
@@ -65,7 +65,7 @@ header {
 
 /* Estilo para el elemento que se está arrastrando */
 .arrastrando {
-    opacity: 0.2; /* Lo hacemos más transparente para que no estorbe visualmente */
+    opacity: 0.2; 
     border: 3px dashed #333;
     background-color: #eee;
 }
