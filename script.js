@@ -5,11 +5,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Función auxiliar para detectar el elemento más cercano y dónde insertarlo
     const obtenerElementoObjetivo = (contenedor, y) => {
+        // Filtra los elementos de la galería que no sean el que se está arrastrando
         const elementosRestantes = [...contenedor.querySelectorAll('.item-galeria:not(.arrastrando)')];
 
         return elementosRestantes.reduce((masCercano, hijo) => {
             const box = hijo.getBoundingClientRect();
-            // Calcula la distancia vertical (offset)
+            // Calcula la distancia vertical (offset) entre el centro del elemento y el cursor (y)
             const offset = y - box.top - box.height / 2;
 
             // Busca el elemento más cercano que esté debajo del cursor (offset negativo más cercano a cero)
@@ -27,16 +28,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (item) {
             draggedItem = item;
             
+            // Añade una clase para el estilo visual (opacidad)
             setTimeout(() => {
                 draggedItem.classList.add('arrastrando');
             }, 0); 
+            // Establece datos para asegurar que el navegador permita la transferencia
             e.dataTransfer.setData('text/plain', 'arrastrando'); 
         }
     });
 
     // 2. REORDENACIÓN EN VIVO (dragover)
+    // Este evento es clave para que el elemento se mueva mientras lo arrastras
     galeria.addEventListener('dragover', (e) => {
-        e.preventDefault(); 
+        e.preventDefault(); // Imprescindible para que la zona sea un destino válido de 'drop'
         
         if (!draggedItem) return;
 
@@ -54,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. FIN DEL ARRASTRE (dragend)
     galeria.addEventListener('dragend', () => {
         if (draggedItem) {
+            // Limpia el estilo de arrastre
             draggedItem.classList.remove('arrastrando');
         }
         draggedItem = null;
