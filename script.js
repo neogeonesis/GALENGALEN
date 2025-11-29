@@ -3,15 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const galeria = document.querySelector('.galeria');
     let draggedItem = null;
 
-    // Función auxiliar para obtener el elemento objetivo
-    const obtenerElementoObjetivo = (e) => {
-        // Busca todos los elementos de la galería que no sean el que estamos arrastrando
-        const elementosRestantes = [...galeria.querySelectorAll('.item-galeria:not(.arrastrando)')];
+    // Función auxiliar para detectar el elemento más cercano (Misma lógica robusta)
+    const obtenerElementoObjetivo = (contenedor, y) => {
+        const elementosRestantes = [...contenedor.querySelectorAll('.item-galeria:not(.arrastrando)')];
 
         return elementosRestantes.reduce((masCercano, hijo) => {
             const box = hijo.getBoundingClientRect();
-            // Calcula la distancia vertical entre el centro del elemento y el cursor
-            const offset = e.clientY - box.top - box.height / 2;
+            const offset = y - box.top - box.height / 2;
 
             if (offset < 0 && offset > masCercano.offset) {
                 return { offset: offset, element: hijo };
@@ -21,33 +19,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { offset: -Infinity }).element;
     };
 
-    // 1. INICIO DEL ARRASTRE (dragstart)
+    // 1. INICIO DEL ARRASTRE (dragstart) - ¡MODIFICACIÓN CLAVE AQUÍ!
     galeria.addEventListener('dragstart', (e) => {
         const item = e.target.closest('.item-galeria');
-        if (item) {
+
+        // **************** CORRECCIÓN CLAVE: Verifica que el elemento arrastrado sea el contenedor ****************
+        if (item && item.contains(e.target)) {
+            // Impedimos que arrastre el enlace o la imagen si no tiene el atributo draggable
+            e.dataTransfer.effectAllowed = 'move'; 
             draggedItem = item;
+            
             setTimeout(() => {
                 draggedItem.classList.add('arrastrando');
             }, 0); 
-            e.dataTransfer.setData('text/plain', 'drag'); 
+            e.dataTransfer.setData('text/plain', 'arrastrando'); 
+        } else {
+            // Si el elemento no es el contenedor, cancelamos el arrastre.
+            e.preventDefault(); 
         }
     });
 
-    // 2. REORDENACIÓN (dragover): Determina dónde colocar el elemento
+    // 2. REORDENACIÓN EN VIVO (dragover)
     galeria.addEventListener('dragover', (e) => {
         e.preventDefault(); 
         
-        // Usamos la función robusta para encontrar el elemento más cercano
-        const afterElement = obtenerElementoObjetivo(e);
-        const currentElement = e.target.closest('.item-galeria');
+        if (!draggedItem) return;
 
-        // Mueve el elemento arrastrado a la nueva posición
-        if (afterElement == null) {
-            // Si no hay un elemento después (estamos al final)
-            if(draggedItem) galeria.appendChild(draggedItem);
+        const afterElement = obtenerElementoObjetivo(galeria, e.clientY);
+
+        if (afterElement) {
+            galeria.insertBefore(draggedItem, afterElement);
         } else {
-            // Mueve el elemento antes del objetivo
-            if(draggedItem) galeria.insertBefore(draggedItem, afterElement);
+            galeria.appendChild(draggedItem);
         }
     });
 
@@ -64,18 +67,3 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
     });
 });
-
-    // 3. FIN DEL ARRASTRE (dragend)
-    galeria.addEventListener('dragend', () => {
-        if (draggedItem) {
-            draggedItem.classList.remove('arrastrando');
-        }
-        draggedItem = null;
-    });
-
-    // 4. NECESARIO PARA COMPATIBILIDAD (dragenter)
-    galeria.addEventListener('dragenter', (e) => {
-        e.preventDefault();
-    });
-});
-
