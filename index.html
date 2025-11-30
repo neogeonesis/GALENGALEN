@@ -85,15 +85,18 @@
             const deltaX = e.clientX - startX;
             const deltaY = e.clientY - startY;
 
+            // Mueve el elemento a la nueva posición absoluta
             currentElement.style.left = `${initialLeft + deltaX}px`;
             currentElement.style.top = `${initialTop + deltaY}px`;
         });
 
         document.addEventListener('mouseup', () => {
+            // Detiene el arrastre
             currentElement = null;
         });
     </script>
 
 </body>
 </html>
+
 
