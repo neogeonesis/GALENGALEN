@@ -3,38 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Web Arrastrable</title>
+    <title>Mi Web Arrastrable Sin Marco</title>
 
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: #ffffff; /* ¡Fondo cambiado a BLANCO! */
             height: 100vh;
-            overflow: hidden; /* Evita barras de desplazamiento */
+            overflow: hidden; 
             font-family: 'Courier New', Courier, monospace;
         }
 
         .draggable {
-            position: absolute; /* Vital para que se mueva */
+            position: absolute; 
             cursor: grab;
             background: white;
             padding: 10px;
-            border: 1px solid #000;
-            box-shadow: 5px 5px 0px rgba(0,0,0,1); /* Sombra dura estilo retro */
+            /* ¡Marco y Sombra ELIMINADOS! */
+            border: none; 
+            box-shadow: none; 
             user-select: none;
             width: fit-content;
         }
 
         .draggable:active {
             cursor: grabbing;
-            background-color: #e8e8e8;
+            background-color: #f0f0f0; /* Un gris muy suave para indicar que está activo */
         }
 
         img {
-            pointer-events: none; /* Evita bugs al arrastrar imágenes */
+            pointer-events: none; 
             display: block;
-            max-width: 200px; /* Tamaño máximo de imágenes */
+            max-width: 200px; 
             height: auto;
         }
     </style>
@@ -67,12 +68,10 @@
                 startX = e.clientX;
                 startY = e.clientY;
                 
-                // Obtenemos la posición actual
                 const rect = currentElement.getBoundingClientRect();
                 initialLeft = rect.left;
                 initialTop = rect.top;
 
-                // Traemos el elemento al frente
                 zIndexCounter++;
                 currentElement.style.zIndex = zIndexCounter;
             });
@@ -80,23 +79,22 @@
 
         document.addEventListener('mousemove', (e) => {
             if (!currentElement) return;
-            e.preventDefault(); // Evita selecciones extrañas
+            e.preventDefault(); 
 
             const deltaX = e.clientX - startX;
             const deltaY = e.clientY - startY;
 
-            // Mueve el elemento a la nueva posición absoluta
             currentElement.style.left = `${initialLeft + deltaX}px`;
             currentElement.style.top = `${initialTop + deltaY}px`;
         });
 
         document.addEventListener('mouseup', () => {
-            // Detiene el arrastre
             currentElement = null;
         });
     </script>
 
 </body>
 </html>
+
 
 
