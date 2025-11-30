@@ -3,22 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Web Arrastrable Corregido</title>
+    <title>Mi Web Arrastrable con Fondo Animado</title>
 
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-color: #ffffff; 
             height: 100vh;
             overflow: hidden; 
             font-family: 'Courier New', Courier, monospace;
+            
+            /* --- ESTILOS DE FONDO ANIMADO --- */
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); /* Colores del gradiente */
+            background-size: 400% 400%; /* Hacemos el gradiente más grande que la pantalla */
+            animation: gradient-move 15s ease infinite; /* Aplicamos la animación */
+            /* -------------------------------- */
+        }
+
+        /* Definición de la animación */
+        @keyframes gradient-move {
+            0% {
+                background-position: 0% 50%; /* Inicio de la animación */
+            }
+            50% {
+                background-position: 100% 50%; /* Punto medio */
+            }
+            100% {
+                background-position: 0% 50%; /* Regreso al inicio */
+            }
         }
 
         .draggable {
             position: absolute; 
             cursor: grab;
-            background: white;
+            background: rgba(255, 255, 255, 0.9); /* Fondo blanco semitransparente */
             padding: 10px;
             border: none; 
             box-shadow: none; 
@@ -31,44 +49,8 @@
             background-color: #f0f0f0; 
         }
 
-        /* --- ESTILOS DE IMAGEN --- */
-
-        .image-container {
-            /* Contenedor principal de la imagen: define el tamaño fijo */
-            width: 200px;
-            height: 200px;
-            position: relative; 
-            overflow: hidden; 
-        }
-        
-        .grayscale-image {
-            /* La capa inferior: imagen en escala de grises */
-            filter: grayscale(100%);
-        }
-
-        .color-reveal {
-            /* El visor: capa superior a color */
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 200px;
-            height: 200px;
-            /* Máscara circular: el "foco" */
-            clip-path: circle(0px at 50% 50%); /* Comienza oculto */
-        }
-
-        /* La imagen en sí dentro del visor */
-        .color-reveal img {
-            filter: grayscale(0%);
-            position: absolute;
-            top: 0;
-            left: 0;
-            margin: 0; 
-        }
-        
-        /* Estilos generales para todas las imágenes */
         img {
-            pointer-events: none; /* Crucial para el arrastre */
+            pointer-events: none; 
             display: block;
             max-width: 200px; 
             height: auto;
@@ -78,14 +60,8 @@
 <body>
 
     <div class="draggable" style="top: 10%; left: 10%;">
-        <div class="image-container">
-            <img class="grayscale-image" src="imagenes/grande1.jpg" alt="Imagen Arrastrable">
-            
-            <div class="color-reveal">
-                <img src="imagenes/grande1.jpg" alt="Imagen a Color">
-            </div>
-        </div>
-        <p>¡Arrastra y Revela!</p>
+        <img src="imagenes/grande1.jpg" alt="Imagen Arrastrable">
+        <p>¡Arrastrame!</p>
     </div>
 
     <div class="draggable" style="top: 40%; left: 50%;">
@@ -94,16 +70,10 @@
     </div>
 
     <div class="draggable" style="top: 20%; left: 70%;">
-        <div class="image-container">
-            <img class="grayscale-image" src="imagenes/grande1.jpg" alt="Imagen Arrastrable">
-            <div class="color-reveal">
-                <img src="imagenes/grande1.jpg" alt="Imagen a Color">
-            </div>
-        </div>
+        <img src="imagenes/grande1.jpg" alt="Otra Imagen Arrastrable">
     </div>
 
     <script>
-        // --- CÓDIGO DE ARRASTRE (NO CAMBIÓ) ---
         const draggables = document.querySelectorAll('.draggable');
         let currentElement = null;
         let startX = 0, startY = 0, initialLeft = 0, initialTop = 0;
@@ -137,30 +107,6 @@
 
         document.addEventListener('mouseup', () => {
             currentElement = null;
-        });
-
-        // --- CÓDIGO DE REVELADO (AÑADIDO Y MEJORADO) ---
-        
-        const imageContainers = document.querySelectorAll('.image-container');
-        const revealSize = '50px'; // Tamaño del círculo de revelado
-
-        imageContainers.forEach(container => {
-            const reveal = container.querySelector('.color-reveal');
-            
-            container.addEventListener('mousemove', (e) => {
-                // Posición relativa del ratón dentro del contenedor
-                const rect = container.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                // Aplica el clip-path al visor
-                reveal.style.clipPath = `circle(${revealSize} at ${x}px ${y}px)`;
-            });
-
-            container.addEventListener('mouseleave', () => {
-                // Oculta el foco cuando el ratón sale
-                reveal.style.clipPath = 'circle(0px at 50% 50%)';
-            });
         });
     </script>
 
