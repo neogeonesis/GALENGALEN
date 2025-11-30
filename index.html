@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Web Arrastrable con Revelado</title>
+    <title>Mi Web Arrastrable Corregido</title>
 
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-color: #ffffff; /* Fondo blanco */
+            background-color: #ffffff; 
             height: 100vh;
             overflow: hidden; 
             font-family: 'Courier New', Courier, monospace;
@@ -18,7 +18,6 @@
         .draggable {
             position: absolute; 
             cursor: grab;
-            /* Estos estilos se mantienen para las cajas de texto */
             background: white;
             padding: 10px;
             border: none; 
@@ -32,45 +31,44 @@
             background-color: #f0f0f0; 
         }
 
-        /* --- NUEVOS ESTILOS PARA EL EFECTO DE REVELADO --- */
+        /* --- ESTILOS DE IMAGEN --- */
 
         .image-container {
-            /* Contenedor que establece el tamaño de la imagen */
+            /* Contenedor principal de la imagen: define el tamaño fijo */
             width: 200px;
             height: 200px;
-            position: relative; /* Necesario para posicionar las capas */
-            overflow: hidden; /* Oculta la parte del visor que sale del borde */
+            position: relative; 
+            overflow: hidden; 
         }
         
         .grayscale-image {
-            /* La capa inferior: imagen en escala de grises (por defecto) */
+            /* La capa inferior: imagen en escala de grises */
             filter: grayscale(100%);
-            transition: filter 0.3s ease; /* Transición suave al pasar el ratón */
         }
 
         .color-reveal {
-            /* El visor (la capa superior a color) */
+            /* El visor: capa superior a color */
             position: absolute;
             top: 0;
             left: 0;
             width: 200px;
             height: 200px;
-            /* Máscara circular para el efecto de revelado */
-            clip-path: circle(30px at 50% 50%); 
+            /* Máscara circular: el "foco" */
+            clip-path: circle(0px at 50% 50%); /* Comienza oculto */
         }
 
+        /* La imagen en sí dentro del visor */
         .color-reveal img {
-            /* La imagen dentro del visor (debe ser la misma que la de abajo) */
             filter: grayscale(0%);
             position: absolute;
             top: 0;
             left: 0;
-            /* Evita que esta imagen se mueva dentro del visor */
             margin: 0; 
         }
-
+        
+        /* Estilos generales para todas las imágenes */
         img {
-            pointer-events: none; 
+            pointer-events: none; /* Crucial para el arrastre */
             display: block;
             max-width: 200px; 
             height: auto;
@@ -79,7 +77,7 @@
 </head>
 <body>
 
-    <div class="draggable" id="draggableImage1" style="top: 10%; left: 10%;">
+    <div class="draggable" style="top: 10%; left: 10%;">
         <div class="image-container">
             <img class="grayscale-image" src="imagenes/grande1.jpg" alt="Imagen Arrastrable">
             
@@ -95,10 +93,9 @@
         <p>Soy una nota flotante.</p>
     </div>
 
-    <div class="draggable" id="draggableImage2" style="top: 20%; left: 70%;">
+    <div class="draggable" style="top: 20%; left: 70%;">
         <div class="image-container">
             <img class="grayscale-image" src="imagenes/grande1.jpg" alt="Imagen Arrastrable">
-            
             <div class="color-reveal">
                 <img src="imagenes/grande1.jpg" alt="Imagen a Color">
             </div>
@@ -106,12 +103,12 @@
     </div>
 
     <script>
+        // --- CÓDIGO DE ARRASTRE (NO CAMBIÓ) ---
         const draggables = document.querySelectorAll('.draggable');
         let currentElement = null;
         let startX = 0, startY = 0, initialLeft = 0, initialTop = 0;
         let zIndexCounter = 1;
 
-        // --- FUNCIONALIDAD DE ARRASTRE (CÓDIGO ORIGINAL) ---
         draggables.forEach(element => {
             element.addEventListener('mousedown', (e) => {
                 currentElement = element;
@@ -142,22 +139,22 @@
             currentElement = null;
         });
 
-        // --- FUNCIONALIDAD DE REVELADO (NUEVO CÓDIGO) ---
+        // --- CÓDIGO DE REVELADO (AÑADIDO Y MEJORADO) ---
         
-        // Elementos que contienen las imágenes para el efecto
         const imageContainers = document.querySelectorAll('.image-container');
+        const revealSize = '50px'; // Tamaño del círculo de revelado
 
         imageContainers.forEach(container => {
             const reveal = container.querySelector('.color-reveal');
             
             container.addEventListener('mousemove', (e) => {
-                // Posición relativa del ratón dentro del contenedor de la imagen
+                // Posición relativa del ratón dentro del contenedor
                 const rect = container.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 
-                // Mueve el círculo de clip-path (el "foco") a la posición del ratón
-                reveal.style.clipPath = `circle(50px at ${x}px ${y}px)`;
+                // Aplica el clip-path al visor
+                reveal.style.clipPath = `circle(${revealSize} at ${x}px ${y}px)`;
             });
 
             container.addEventListener('mouseleave', () => {
@@ -169,4 +166,3 @@
 
 </body>
 </html>
-
